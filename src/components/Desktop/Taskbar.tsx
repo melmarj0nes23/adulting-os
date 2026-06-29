@@ -84,7 +84,7 @@ export default function Taskbar({ user, onSignOut, onOpenApp, accentClass, showF
   return (
     <div className="relative select-none z-[9990]">
       {/* Real-time system top bar */}
-      <div className="w-full h-11 bg-white/70 dark:bg-zinc-950/25 border-b border-zinc-200/50 dark:border-white/5 backdrop-blur-xl flex items-center justify-between px-4 text-neutral-800 dark:text-white text-xs font-medium">
+      <div className="w-full h-11 bg-white/70 dark:bg-zinc-950/25 border-b border-zinc-200/50 dark:border-white/5 backdrop-blur-xl flex items-center justify-between px-4 text-neutral-800 dark:text-white text-xs font-medium relative">
         
         {/* Left Side: LifeDeskOS Identity & Status */}
         <div className="flex items-center gap-3">
@@ -107,7 +107,7 @@ export default function Taskbar({ user, onSignOut, onOpenApp, accentClass, showF
         </div>
 
         {/* Center: System Clock & Calendar */}
-        <div className="flex items-center gap-1.5 sm:gap-2 text-neutral-800 dark:text-neutral-200">
+        <div className="absolute left-1/2 -translate-x-1/2 flex items-center gap-1.5 sm:gap-2 text-neutral-800 dark:text-neutral-200 whitespace-nowrap">
           <span className="font-mono font-semibold">{formattedTime}</span>
           <span className="text-neutral-300 dark:text-neutral-500 hidden sm:inline">•</span>
           <span className="hidden sm:inline">{formattedDate}</span>
