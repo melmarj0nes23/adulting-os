@@ -9,6 +9,24 @@
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
 }
 
+/* Prevent viewport pulling, elastic scroll and page bounce on tablets and mobile devices */
+html, body, #root {
+  overflow: hidden;
+  overscroll-behavior: none;
+  overscroll-behavior-y: none;
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  touch-action: none; /* Disable default touch pinch/pull gestures at root */
+}
+
+/* Permit scroll inside app windows and containers */
+.allow-scroll, .scrollbar-thin, textarea, input, select, [role="dialog"] {
+  touch-action: auto;
+}
+
 /* Custom scrollbar helpers for our glass dashboards */
 .scrollbar-thin::-webkit-scrollbar {
   width: 5px;
