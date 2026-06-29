@@ -17,7 +17,7 @@ export default function AboutApp() {
         </div>
 
         <h2 className="text-2xl font-bold tracking-tight font-display text-neutral-800 dark:text-white">
-          Adulting<span className="text-violet-500 dark:text-violet-400">OS</span>
+          LifeDesk<span className="text-violet-500 dark:text-violet-400">OS</span>
         </h2>
         <p className="text-xs font-mono text-neutral-500 dark:text-neutral-400 mt-1">
           v1.0.0 (Phase 1 Foundation)

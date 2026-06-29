@@ -42,9 +42,9 @@ export default function Taskbar({ user, onSignOut, onOpenApp, accentClass, showF
       loadNotifications();
     };
 
-    window.addEventListener('adulting_os_db_update', handleUpdate);
+    window.addEventListener('lifedesk_os_db_update', handleUpdate);
     return () => {
-      window.removeEventListener('adulting_os_db_update', handleUpdate);
+      window.removeEventListener('lifedesk_os_db_update', handleUpdate);
     };
   }, [user]);
 
@@ -86,7 +86,7 @@ export default function Taskbar({ user, onSignOut, onOpenApp, accentClass, showF
       {/* Real-time system top bar */}
       <div className="w-full h-11 bg-white/70 dark:bg-zinc-950/25 border-b border-zinc-200/50 dark:border-white/5 backdrop-blur-xl flex items-center justify-between px-4 text-neutral-800 dark:text-white text-xs font-medium">
         
-        {/* Left Side: AdultingOS Identity & Status */}
+        {/* Left Side: LifeDeskOS Identity & Status */}
         <div className="flex items-center gap-3">
           <button
             id="taskbar-logo"
@@ -95,7 +95,7 @@ export default function Taskbar({ user, onSignOut, onOpenApp, accentClass, showF
           >
             <Sparkles className="w-4 h-4 text-violet-500 dark:text-violet-400" />
             <span className="font-display font-bold text-sm tracking-tight">
-              Adulting<span className="text-violet-500 dark:text-violet-400">OS</span>
+              LifeDesk<span className="text-violet-500 dark:text-violet-400">OS</span>
             </span>
           </button>
           

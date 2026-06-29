@@ -222,7 +222,13 @@ export default function Window({
       {!(isMaximized || isMobile) && (
         <div
           onPointerDown={(e) => {
+            const target = e.currentTarget as HTMLDivElement;
+            try {
+              target.setPointerCapture(e.pointerId);
+            } catch (err) {}
+
             e.stopPropagation();
+            e.preventDefault();
             onFocus(id);
             // Initiate standard window titlebar moving if they hold titlebar
             const startX = e.clientX;
@@ -236,15 +242,18 @@ export default function Window({
               onMove(id, startWinX + dx, startWinY + dy);
             };
 
-            const handlePointerUp = () => {
+            const handlePointerUp = (upEvent: PointerEvent) => {
               window.removeEventListener('pointermove', handlePointerMove);
               window.removeEventListener('pointerup', handlePointerUp);
+              try {
+                target.releasePointerCapture(upEvent.pointerId);
+              } catch (err) {}
             };
 
             window.addEventListener('pointermove', handlePointerMove);
             window.addEventListener('pointerup', handlePointerUp);
           }}
-          className={`absolute top-0 left-24 right-12 ${dragHandleHeightClass} cursor-move`}
+          className={`absolute top-0 left-24 right-12 ${dragHandleHeightClass} cursor-move touch-none`}
           style={{ zIndex: 1 }}
         />
       )}
@@ -252,8 +261,23 @@ export default function Window({
       {/* Custom Window Resize handle bottom-right with PointerEvents */}
       {!(isMaximized || isMobile) && (
         <div
-          onPointerDown={handleResizeStart}
-          className="absolute bottom-0 right-0 w-5 h-5 cursor-se-resize z-50 flex items-end justify-end p-0.5"
+          onPointerDown={(e) => {
+            const target = e.currentTarget as HTMLDivElement;
+            try {
+              target.setPointerCapture(e.pointerId);
+            } catch (err) {}
+
+            const handlePointerUp = (upEvent: PointerEvent) => {
+              window.removeEventListener('pointerup', handlePointerUp);
+              try {
+                target.releasePointerCapture(upEvent.pointerId);
+              } catch (err) {}
+            };
+            window.addEventListener('pointerup', handlePointerUp);
+
+            handleResizeStart(e);
+          }}
+          className="absolute bottom-0 right-0 w-6 h-6 cursor-se-resize z-50 flex items-end justify-end p-1.5 touch-none"
         >
           {/* Subtle resize icon stripes */}
           <svg width="6" height="6" viewBox="0 0 6 6" className="text-black/20 dark:text-white/20 hover:text-black/40 dark:hover:text-white/40 transition-colors">

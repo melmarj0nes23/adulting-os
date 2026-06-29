@@ -1,5 +1,5 @@
 {
-  "name": "AdultingOS",
+  "name": "LifeDeskOS",
   "description": "A desktop-inspired personal workspace designed to organize everyday life through modular applications.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]

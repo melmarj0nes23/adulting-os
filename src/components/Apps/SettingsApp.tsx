@@ -80,7 +80,7 @@ export default function SettingsApp({
   const systemInfo = React.useMemo(() => {
     const userCount = DbService.getUserCount();
     return {
-      osName: 'AdultingOS',
+      osName: 'LifeDeskOS',
       osVersion: 'v1.0.0 (Stable)',
       platform: 'React 19 & WebAssembly Sandboxed Context',
       registeredUsers: userCount,

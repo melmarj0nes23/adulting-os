@@ -7,8 +7,8 @@ import { User, UserPreferences } from '../types';
 import { hashPassword, verifyPassword } from './crypto';
 
 // Local storage keys
-const USERS_KEY = 'adulting_os_users';
-const PREFS_KEY_PREFIX = 'adulting_os_prefs_';
+const USERS_KEY = 'lifedesk_os_users';
+const PREFS_KEY_PREFIX = 'lifedesk_os_prefs_';
 
 // Default Preferences
 export const DEFAULT_PREFERENCES: UserPreferences = {
@@ -159,7 +159,7 @@ export const DbService = {
       demoUser = {
         id: demoId,
         username: 'Guest Demo',
-        email: 'demo@adultingos.com',
+        email: 'demo@lifedeskos.com',
         passwordHash: '',
         createdAt: new Date().toISOString(),
       };
@@ -311,10 +311,10 @@ export const DbService = {
   },
 
   /**
-   * Loads full AdultingOS application data for a user, initializing it with premium default records if none exists.
+   * Loads full LifeDeskOS application data for a user, initializing it with premium default records if none exists.
    */
   getUserData(userId: string): any {
-    const key = `adulting_os_data_${userId}`;
+    const key = `lifedesk_os_data_${userId}`;
     try {
       const stored = localStorage.getItem(key);
       if (stored) {
@@ -343,7 +343,7 @@ export const DbService = {
         {
           id: 'notif_1',
           title: 'Workspace Initialized',
-          message: 'Welcome to AdultingOS! Your premium dashboard and personal productivity suite is active.',
+          message: 'Welcome to LifeDeskOS! Your premium dashboard and personal productivity suite is active.',
           type: 'success',
           icon: 'Sparkles',
           timestamp: new Date(now.getTime() - 600000).toISOString(),
@@ -652,13 +652,13 @@ export const DbService = {
   },
 
   /**
-   * Persists updated AdultingOS application data for a user.
+   * Persists updated LifeDeskOS application data for a user.
    */
   saveUserData(userId: string, data: any): void {
-    const key = `adulting_os_data_${userId}`;
+    const key = `lifedesk_os_data_${userId}`;
     try {
       localStorage.setItem(key, JSON.stringify(data));
-      window.dispatchEvent(new Event('adulting_os_db_update'));
+      window.dispatchEvent(new Event('lifedesk_os_db_update'));
     } catch (e) {
       console.error('Error saving user application data:', e);
     }

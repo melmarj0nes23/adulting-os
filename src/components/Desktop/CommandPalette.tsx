@@ -92,8 +92,8 @@ export default function CommandPalette({ user, isOpen, onClose, onOpenApp }: Com
         action: () => {
           onOpenApp('notes');
           // In the notes app, the note can be auto-selected
-          localStorage.setItem(`adulting_os_selected_note_${user.id}`, note.id);
-          window.dispatchEvent(new CustomEvent('adulting_os_select_note', { detail: note.id }));
+          localStorage.setItem(`lifedesk_os_selected_note_${user.id}`, note.id);
+          window.dispatchEvent(new CustomEvent('lifedesk_os_select_note', { detail: note.id }));
           onClose();
         },
       });
@@ -257,7 +257,7 @@ export default function CommandPalette({ user, isOpen, onClose, onOpenApp }: Com
               <span className="font-mono border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-zinc-800 px-1 rounded">Enter</span> Launch
             </span>
           </div>
-          <div>AdultingOS Command Palette</div>
+          <div>LifeDeskOS Command Palette</div>
         </div>
       </div>
     </div>

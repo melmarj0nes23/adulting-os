@@ -120,7 +120,7 @@ export const APPS: AppManifest[] = [
   },
   {
     id: 'about',
-    title: 'About AdultingOS',
+    title: 'About LifeDeskOS',
     icon: 'Info',
     defaultWidth: 460,
     defaultHeight: 340,

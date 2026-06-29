@@ -97,7 +97,7 @@ export default function LoginScreen({ onSuccess }: LoginScreenProps) {
             <Sparkles className="w-7 h-7" />
           </div>
           <h1 className="text-3xl font-bold tracking-tight text-white font-display">
-            Adulting<span className="text-violet-400">OS</span>
+            LifeDesk<span className="text-violet-400">OS</span>
           </h1>
           <p className="text-sm text-neutral-400 mt-2">
             Your premium, isolated personal workspace
@@ -265,7 +265,7 @@ export default function LoginScreen({ onSuccess }: LoginScreenProps) {
               {isRegistering ? (
                 <>Already have an account? <span className="text-violet-400 font-medium">Sign in</span></>
               ) : (
-                <>New to AdultingOS? <span className="text-violet-400 font-medium">Create an account</span></>
+                <>New to LifeDeskOS? <span className="text-violet-400 font-medium">Create an account</span></>
               )}
             </button>
           </div>

@@ -78,7 +78,7 @@ export default function App() {
 
   // Check if user is already authenticated in session
   useEffect(() => {
-    const cachedUser = localStorage.getItem('adulting_os_current_user');
+    const cachedUser = localStorage.getItem('lifedesk_os_current_user');
     if (cachedUser) {
       try {
         const parsedUser = JSON.parse(cachedUser);
@@ -87,15 +87,15 @@ export default function App() {
         setPreferences(prefs);
 
         // Restore saved window layout for this user
-        const savedWindows = localStorage.getItem(`adulting_os_open_windows_${parsedUser.id}`);
+        const savedWindows = localStorage.getItem(`lifedesk_os_open_windows_${parsedUser.id}`);
         if (savedWindows) {
           setOpenWindows(JSON.parse(savedWindows));
         }
-        const savedActive = localStorage.getItem(`adulting_os_active_window_${parsedUser.id}`);
+        const savedActive = localStorage.getItem(`lifedesk_os_active_window_${parsedUser.id}`);
         if (savedActive) {
           setActiveWindowId(savedActive);
         }
-        const savedZ = localStorage.getItem(`adulting_os_next_z_index_${parsedUser.id}`);
+        const savedZ = localStorage.getItem(`lifedesk_os_next_z_index_${parsedUser.id}`);
         if (savedZ) {
           setNextZIndex(parseInt(savedZ, 10));
         }
@@ -110,44 +110,44 @@ export default function App() {
   // Automatically persist window state changes for the current user
   useEffect(() => {
     if (user && isRestoredRef.current) {
-      localStorage.setItem(`adulting_os_open_windows_${user.id}`, JSON.stringify(openWindows));
+      localStorage.setItem(`lifedesk_os_open_windows_${user.id}`, JSON.stringify(openWindows));
     }
   }, [openWindows, user]);
 
   useEffect(() => {
     if (user && isRestoredRef.current) {
       if (activeWindowId) {
-        localStorage.setItem(`adulting_os_active_window_${user.id}`, activeWindowId);
+        localStorage.setItem(`lifedesk_os_active_window_${user.id}`, activeWindowId);
       } else {
-        localStorage.removeItem(`adulting_os_active_window_${user.id}`);
+        localStorage.removeItem(`lifedesk_os_active_window_${user.id}`);
       }
     }
   }, [activeWindowId, user]);
 
   useEffect(() => {
     if (user && isRestoredRef.current) {
-      localStorage.setItem(`adulting_os_next_z_index_${user.id}`, nextZIndex.toString());
+      localStorage.setItem(`lifedesk_os_next_z_index_${user.id}`, nextZIndex.toString());
     }
   }, [nextZIndex, user]);
 
   const handleAuthSuccess = (authenticatedUser: User) => {
     setUser(authenticatedUser);
-    localStorage.setItem('adulting_os_current_user', JSON.stringify(authenticatedUser));
+    localStorage.setItem('lifedesk_os_current_user', JSON.stringify(authenticatedUser));
     const prefs = DbService.getPreferences(authenticatedUser.id);
     setPreferences(prefs);
     
     // Check if we already have saved windows we should restore
-    const savedWindows = localStorage.getItem(`adulting_os_open_windows_${authenticatedUser.id}`);
+    const savedWindows = localStorage.getItem(`lifedesk_os_open_windows_${authenticatedUser.id}`);
     if (savedWindows) {
       try {
         const parsedWindows = JSON.parse(savedWindows);
         if (parsedWindows.length > 0) {
           setOpenWindows(parsedWindows);
-          const savedActive = localStorage.getItem(`adulting_os_active_window_${authenticatedUser.id}`);
+          const savedActive = localStorage.getItem(`lifedesk_os_active_window_${authenticatedUser.id}`);
           if (savedActive) {
             setActiveWindowId(savedActive);
           }
-          const savedZ = localStorage.getItem(`adulting_os_next_z_index_${authenticatedUser.id}`);
+          const savedZ = localStorage.getItem(`lifedesk_os_next_z_index_${authenticatedUser.id}`);
           if (savedZ) {
             setNextZIndex(parseInt(savedZ, 10));
           }
@@ -169,7 +169,7 @@ export default function App() {
     setUser(null);
     setOpenWindows([]);
     setActiveWindowId(null);
-    localStorage.removeItem('adulting_os_current_user');
+    localStorage.removeItem('lifedesk_os_current_user');
   };
 
   // --------------------------------------------------------
@@ -402,7 +402,7 @@ export default function App() {
                         currentUser={user}
                         onUpdateUser={(updatedUser) => {
                           setUser(updatedUser);
-                          localStorage.setItem('adulting_os_current_user', JSON.stringify(updatedUser));
+                          localStorage.setItem('lifedesk_os_current_user', JSON.stringify(updatedUser));
                         }}
                         openWindowsCount={openWindows.length}
                       />

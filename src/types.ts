@@ -231,7 +231,7 @@ export interface HealthData {
   moodLog: MoodLog[];
 }
 
-export interface AdultingOSData {
+export interface LifeDeskOSData {
   notifications: NotificationItem[];
   notes: NoteItem[];
   tasks: TaskItem[];

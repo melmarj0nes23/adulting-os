@@ -44,9 +44,9 @@ export default function CalendarApp({ user }: CalendarAppProps) {
       loadData();
     };
 
-    window.addEventListener('adulting_os_db_update', handleUpdate);
+    window.addEventListener('lifedesk_os_db_update', handleUpdate);
     return () => {
-      window.removeEventListener('adulting_os_db_update', handleUpdate);
+      window.removeEventListener('lifedesk_os_db_update', handleUpdate);
     };
   }, [user.id]);
 

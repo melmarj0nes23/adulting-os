@@ -41,11 +41,11 @@ export default function NotesApp({ user }: NotesAppProps) {
     // Auto-select first note if none selected (unless on mobile)
     if (loadedNotes.length > 0 && !selectedNoteId) {
       // Check if there was a note selected by command palette search
-      const savedSelected = localStorage.getItem(`adulting_os_selected_note_${user.id}`);
+      const savedSelected = localStorage.getItem(`lifedesk_os_selected_note_${user.id}`);
       if (savedSelected && loadedNotes.some((n: any) => n.id === savedSelected)) {
         setSelectedNoteId(savedSelected);
         setMobileView('editor');
-        localStorage.removeItem(`adulting_os_selected_note_${user.id}`);
+        localStorage.removeItem(`lifedesk_os_selected_note_${user.id}`);
       } else if (window.innerWidth >= 768) {
         setSelectedNoteId(loadedNotes[0].id);
       }
@@ -67,12 +67,12 @@ export default function NotesApp({ user }: NotesAppProps) {
       }
     };
 
-    window.addEventListener('adulting_os_db_update', handleUpdate);
-    window.addEventListener('adulting_os_select_note', handleSelectNote);
+    window.addEventListener('lifedesk_os_db_update', handleUpdate);
+    window.addEventListener('lifedesk_os_select_note', handleSelectNote);
 
     return () => {
-      window.removeEventListener('adulting_os_db_update', handleUpdate);
-      window.removeEventListener('adulting_os_select_note', handleSelectNote);
+      window.removeEventListener('lifedesk_os_db_update', handleUpdate);
+      window.removeEventListener('lifedesk_os_select_note', handleSelectNote);
     };
   }, [user.id]);
 
