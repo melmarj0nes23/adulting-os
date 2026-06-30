@@ -128,52 +128,55 @@ export default function HomeScreenGrid({ apps, onOpenApp, accentClass }: HomeScr
 
   return (
     <div className="absolute inset-0 px-4 sm:px-8 py-20 overflow-y-auto scrollbar-none [scrollbar-width:none] [&::-webkit-scrollbar]:hidden pointer-events-auto flex flex-col">
-      {/* Title / Welcoming Message */}
-      <motion.div
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="mb-6 mt-2 text-center sm:text-left"
-      >
-        <h2 className="text-sm font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-widest">
-          Desktop Applications
-        </h2>
-      </motion.div>
+      {/* Responsive frosted glass backing panel on mobile for excellent wallpaper contrast */}
+      <div className="w-full max-w-lg sm:max-w-xl md:max-w-2xl mx-auto sm:mx-0 flex flex-col max-sm:bg-white/40 max-sm:dark:bg-zinc-950/45 max-sm:backdrop-blur-xl max-sm:rounded-3xl max-sm:p-5 max-sm:border max-sm:border-white/15 max-sm:dark:border-white/5 max-sm:shadow-xl max-sm:shadow-black/5 max-sm:mt-2">
+        {/* Title / Welcoming Message */}
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-6 mt-2 text-center sm:text-left"
+        >
+          <h2 className="text-sm font-bold text-neutral-600 dark:text-neutral-300 uppercase tracking-widest [text-shadow:_0_1px_2px_rgba(255,255,255,0.7)] dark:[text-shadow:_0_1px_2px_rgba(0,0,0,0.6)]">
+            Desktop Applications
+          </h2>
+        </motion.div>
 
-      {/* Grid of Apps */}
-      <motion.div
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
-        className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-y-8 gap-x-4 max-w-lg sm:max-w-xl md:max-w-2xl mx-auto sm:mx-0 pb-32"
-      >
-        {filteredApps.map((app) => {
-          const IconComponent = (LucideIcons as any)[app.icon] || LucideIcons.HelpCircle;
-          const style = getAppStyle(app.id);
+        {/* Grid of Apps */}
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+          className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-y-8 gap-x-4 pb-4 sm:pb-32"
+        >
+          {filteredApps.map((app) => {
+            const IconComponent = (LucideIcons as any)[app.icon] || LucideIcons.HelpCircle;
+            const style = getAppStyle(app.id);
 
-          return (
-            <motion.button
-              key={app.id}
-              variants={itemVariants}
-              whileTap={{ scale: 0.92 }}
-              onClick={() => onOpenApp(app.id)}
-              className="flex flex-col items-center gap-2 group cursor-pointer focus:outline-none"
-              id={`home-app-${app.id}`}
-            >
-              {/* Launcher Icon Container */}
-              <div
-                className={`w-[60px] h-[60px] sm:w-[64px] sm:h-[64px] rounded-2xl flex items-center justify-center border backdrop-blur-md shadow-sm transition-all duration-300 ${style.bg} ${style.glow} group-hover:scale-105 active:scale-95`}
+            return (
+              <motion.button
+                key={app.id}
+                variants={itemVariants}
+                whileTap={{ scale: 0.92 }}
+                onClick={() => onOpenApp(app.id)}
+                className="flex flex-col items-center gap-2 group cursor-pointer focus:outline-none"
+                id={`home-app-${app.id}`}
               >
-                <IconComponent className="w-6 h-6 sm:w-7 sm:h-7" />
-              </div>
+                {/* Launcher Icon Container */}
+                <div
+                  className={`w-[60px] h-[60px] sm:w-[64px] sm:h-[64px] rounded-2xl flex items-center justify-center border backdrop-blur-md shadow-sm transition-all duration-300 ${style.bg} ${style.glow} group-hover:scale-105 active:scale-95`}
+                >
+                  <IconComponent className="w-6 h-6 sm:w-7 sm:h-7" />
+                </div>
 
-              {/* Application Title */}
-              <span className="text-[11px] sm:text-xs font-semibold text-neutral-700 dark:text-neutral-200 text-center px-1 truncate w-full group-hover:text-neutral-900 dark:group-hover:text-white transition-colors">
-                {app.title}
-              </span>
-            </motion.button>
-          );
-        })}
-      </motion.div>
+                {/* Application Title with high-contrast drop-shadow for peak wallpaper legibility */}
+                <span className="text-[11px] sm:text-xs font-semibold text-neutral-800 dark:text-neutral-100 text-center px-1 truncate w-full group-hover:text-neutral-900 dark:group-hover:text-white transition-colors [text-shadow:_0_1px_2px_rgba(255,255,255,0.85)] dark:[text-shadow:_0_1px_2px_rgba(0,0,0,0.85)]">
+                  {app.title}
+                </span>
+              </motion.button>
+            );
+          })}
+        </motion.div>
+      </div>
     </div>
   );
 }
