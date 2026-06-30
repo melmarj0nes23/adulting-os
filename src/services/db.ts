@@ -13,11 +13,11 @@ const PREFS_KEY_PREFIX = 'lifedesk_os_prefs_';
 // Default Preferences
 export const DEFAULT_PREFERENCES: UserPreferences = {
   theme: 'light',
-  wallpaper: 'light-spring',
+  wallpaper: 'melmar-wp1',
   accentColor: 'violet',
   dockPosition: 'bottom',
   uiScale: 'standard',
-  blurIntensity: 'medium',
+  blurIntensity: 'none',
   magnifyDock: true,
   showFullDate: true,
   widgets: ['tasks', 'health', 'bills', 'notes'],
@@ -28,10 +28,15 @@ export const DEFAULT_PREFERENCES: UserPreferences = {
 export interface WallpaperOption {
   id: string;
   name: string;
-  className: string; // Tailwind gradient/styling
+  className: string; // Tailwind gradient/styling or custom class
 }
 
 export const WALLPAPERS: WallpaperOption[] = [
+  {
+    id: 'melmar-wp1',
+    name: 'Melmar Forest',
+    className: 'bg-zinc-900',
+  },
   {
     id: 'dark-mesh',
     name: 'Midnight Mesh',
@@ -166,6 +171,21 @@ export const DbService = {
       users.push(demoUser);
       saveStoredUsers(users);
       this.savePreferences(demoId, DEFAULT_PREFERENCES);
+    } else {
+      // Migrate old demo wallpaper to the new default beautiful image
+      const prefs = this.getPreferences(demoId);
+      let changed = false;
+      if (prefs.wallpaper === 'light-spring') {
+        prefs.wallpaper = 'melmar-wp1';
+        changed = true;
+      }
+      if (prefs.blurIntensity === 'medium' || !prefs.blurIntensity) {
+        prefs.blurIntensity = 'none';
+        changed = true;
+      }
+      if (changed) {
+        this.savePreferences(demoId, prefs);
+      }
     }
     
     return {

@@ -361,12 +361,12 @@ export default function SettingsApp({
                 onClick={() => {
                   if (window.confirm("Are you sure you want to restore all settings to default?")) {
                     const defaults = DbService.savePreferences(userId, {
-                      theme: 'dark',
-                      wallpaper: 'gradient-aurora',
+                      theme: 'light',
+                      wallpaper: 'melmar-wp1',
                       accentColor: 'violet',
                       dockPosition: 'bottom',
                       uiScale: 'standard',
-                      blurIntensity: 'medium',
+                      blurIntensity: 'none',
                       magnifyDock: true,
                       showFullDate: true,
                     });
@@ -451,12 +451,12 @@ export default function SettingsApp({
                     key={blur}
                     onClick={() => handlePreferenceChange({ blurIntensity: blur })}
                     className={`relative flex flex-col items-center justify-center p-3 rounded-xl border capitalize text-xs font-semibold transition-all ${
-                      (preferences.blurIntensity || 'medium') === blur
+                      (preferences.blurIntensity || 'none') === blur
                         ? 'bg-violet-500/10 dark:bg-violet-600/10 border-violet-500 text-violet-600 dark:text-white shadow-md'
                         : 'bg-white dark:bg-white/[0.02] border-zinc-200 dark:border-white/5 text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-white/[0.04]'
                     }`}
                   >
-                    {(preferences.blurIntensity || 'medium') === blur && (
+                    {(preferences.blurIntensity || 'none') === blur && (
                       <span className="absolute top-1.5 right-1.5 bg-violet-500 text-white rounded-full p-0.5">
                         <Check className="w-2.5 h-2.5" />
                       </span>

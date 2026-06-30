@@ -34,7 +34,7 @@ export default function Window({
   activeWindowId,
   children,
   uiScale = 'standard',
-  blurIntensity = 'medium',
+  blurIntensity = 'none',
 }: WindowProps) {
   const windowRef = useRef<HTMLDivElement>(null);
   const isFocused = activeWindowId === windowState.id;

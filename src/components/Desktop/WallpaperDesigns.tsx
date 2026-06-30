@@ -15,6 +15,20 @@ export default function WallpaperDesigns({ wallpaperId, isThumbnail = false }: W
   const scaleClass = isThumbnail ? 'opacity-70 scale-95' : 'opacity-100';
 
   switch (wallpaperId) {
+    case 'melmar-wp1':
+      return (
+        <div className={`absolute inset-0 overflow-hidden pointer-events-none transition-all duration-300 ${scaleClass}`}>
+          <img 
+            src="https://cdn.jsdelivr.net/gh/melmarj0nes23/melmar-assets@main/images/wp1.webp" 
+            alt="Melmar Forest Wallpaper"
+            className="w-full h-full object-cover select-none pointer-events-none"
+            referrerPolicy="no-referrer"
+          />
+          {/* A balanced, elegant dark glass overlay so that the white/dark text and cards stand out beautifully */}
+          <div className="absolute inset-0 bg-neutral-900/10 dark:bg-black/35" />
+        </div>
+      );
+
     case 'dark-mesh':
       return (
         <div className={`absolute inset-0 overflow-hidden pointer-events-none ${scaleClass}`}>

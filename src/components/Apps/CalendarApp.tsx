@@ -17,6 +17,7 @@ export default function CalendarApp({ user }: CalendarAppProps) {
   const [bills, setBills] = useState<BillItem[]>([]);
   const [tasks, setTasks] = useState<TaskItem[]>([]);
   const [currentDate, setCurrentDate] = useState(new Date());
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [viewMode, setViewMode] = useState<'month' | 'week' | 'day'>('month');
   const [searchQuery, setSearchQuery] = useState('');
   const [mobileTab, setMobileTab] = useState<'calendar' | 'agenda'>('calendar');
@@ -103,11 +104,15 @@ export default function CalendarApp({ user }: CalendarAppProps) {
   const startDayIndex = (startOfMonth.getDay() + 6) % 7; // Align to Monday start (0=Mon, 6=Sun)
 
   const handlePrevMonth = () => {
-    setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1));
+    const prevMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1);
+    setCurrentDate(prevMonth);
+    setSelectedDate(prevMonth);
   };
 
   const handleNextMonth = () => {
-    setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1));
+    const nextMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1);
+    setCurrentDate(nextMonth);
+    setSelectedDate(nextMonth);
   };
 
   // Color mapping utilities
@@ -145,6 +150,63 @@ export default function CalendarApp({ user }: CalendarAppProps) {
     tasks.forEach(t => {
       if (t.dueDate === datestr && !t.completed) {
         items.push({ id: t.id, title: `✓ ${t.title}`, color: 'indigo', type: 'task' });
+      }
+    });
+
+    return items;
+  };
+
+  const getSelectedDayFullItems = () => {
+    const datestr = `${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(2, '0')}-${String(selectedDate.getDate()).padStart(2, '0')}`;
+    const items: Array<{
+      id: string;
+      title: string;
+      description?: string;
+      time?: string;
+      color: string;
+      type: 'event' | 'bill' | 'task';
+    }> = [];
+
+    // Events
+    events.forEach(e => {
+      if (e.startDate.startsWith(datestr)) {
+        const timePart = e.startDate.split('T')[1] || '';
+        items.push({
+          id: e.id,
+          title: e.title,
+          description: e.description,
+          time: timePart,
+          color: e.color,
+          type: 'event'
+        });
+      }
+    });
+
+    // Bills
+    bills.forEach(b => {
+      if (b.dueDate === datestr) {
+        items.push({
+          id: b.id,
+          title: b.name,
+          description: `Amount: $${b.amount} • ${b.category || 'Bill'}`,
+          time: 'All Day',
+          color: 'amber',
+          type: 'bill'
+        });
+      }
+    });
+
+    // Tasks
+    tasks.forEach(t => {
+      if (t.dueDate === datestr) {
+        items.push({
+          id: t.id,
+          title: t.title,
+          description: t.completed ? 'Completed' : 'Pending Task',
+          time: 'All Day',
+          color: 'indigo',
+          type: 'task'
+        });
       }
     });
 
@@ -203,6 +265,7 @@ export default function CalendarApp({ user }: CalendarAppProps) {
       {/* Mobile view selector tab */}
       <div className="flex md:hidden bg-zinc-100 dark:bg-white/[0.04] p-1 mx-3 mt-3 rounded-xl border border-zinc-200 dark:border-white/5 flex-shrink-0">
         <button
+          type="button"
           onClick={() => setMobileTab('calendar')}
           className={`flex-1 text-center py-2 text-xs font-semibold rounded-lg transition-colors ${
             mobileTab === 'calendar'
@@ -213,6 +276,7 @@ export default function CalendarApp({ user }: CalendarAppProps) {
           Calendar Grid
         </button>
         <button
+          type="button"
           onClick={() => setMobileTab('agenda')}
           className={`flex-1 text-center py-2 text-xs font-semibold rounded-lg transition-colors ${
             mobileTab === 'agenda'
@@ -327,70 +391,250 @@ export default function CalendarApp({ user }: CalendarAppProps) {
             </form>
           )}
 
-          {/* 1. Weekday labels */}
-          <div className="grid grid-cols-7 gap-1.5 mb-1.5 text-center">
-            {dayNames.map(day => (
-              <div key={day} className="text-[10px] font-bold text-neutral-400 dark:text-neutral-500 uppercase tracking-widest py-1">
-                {day}
-              </div>
-            ))}
+          {/* DESKTOP CALENDAR VIEW */}
+          <div className="hidden md:flex flex-col flex-1">
+            {/* 1. Weekday labels */}
+            <div className="grid grid-cols-7 gap-1.5 mb-1.5 text-center">
+              {dayNames.map(day => (
+                <div key={day} className="text-[10px] font-bold text-neutral-400 dark:text-neutral-500 uppercase tracking-widest py-1">
+                  {day}
+                </div>
+              ))}
+            </div>
+
+            {/* 2. Month Calendar Grid */}
+            <div className="grid grid-cols-7 gap-1.5 flex-1 min-h-[300px]">
+              {/* Empty cells for matching offset */}
+              {Array.from({ length: startDayIndex }).map((_, idx) => (
+                <div key={`empty-${idx}`} className="rounded-2xl border border-dashed border-zinc-200 dark:border-white/5 bg-zinc-50/10 dark:bg-transparent" />
+              ))}
+
+              {/* Actual days */}
+              {Array.from({ length: daysInMonth }).map((_, idx) => {
+                const dayNum = idx + 1;
+                const isToday =
+                  dayNum === new Date().getDate() &&
+                  currentDate.getMonth() === new Date().getMonth() &&
+                  currentDate.getFullYear() === new Date().getFullYear();
+
+                const dayItems = getDayItems(currentDate.getFullYear(), currentDate.getMonth(), dayNum);
+
+                return (
+                  <div
+                    key={`day-${dayNum}`}
+                    className={`rounded-2xl border min-h-[80px] p-2 flex flex-col justify-between transition-all ${
+                      isToday
+                        ? 'border-violet-500 bg-violet-500/[0.03] shadow-inner'
+                        : 'border-zinc-200 dark:border-white/5 bg-white dark:bg-zinc-900/30'
+                    }`}
+                  >
+                    {/* Day label */}
+                    <div className="flex items-center justify-between">
+                      <span className={`text-xs font-bold ${isToday ? 'text-violet-500 bg-violet-500/10 rounded-full w-5 h-5 flex items-center justify-center' : 'text-neutral-700 dark:text-neutral-300'}`}>
+                        {dayNum}
+                      </span>
+                    </div>
+
+                    {/* Day item list */}
+                    <div className="flex flex-col gap-1 mt-1.5 overflow-hidden">
+                      {dayItems.slice(0, 3).map(item => (
+                        <div
+                          key={item.id}
+                          className={`text-[9px] font-semibold py-0.5 px-1.5 rounded border truncate ${
+                            colorMap[item.color] || colorMap.violet
+                          }`}
+                          title={item.title}
+                        >
+                          {item.title}
+                        </div>
+                      ))}
+                      {dayItems.length > 3 && (
+                        <div className="text-[8px] text-neutral-400 text-center font-bold">
+                          +{dayItems.length - 3} more
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           </div>
 
-          {/* 2. Month Calendar Grid */}
-          <div className="grid grid-cols-7 gap-1.5 flex-1 min-h-[300px]">
-            {/* Empty cells for matching offset */}
-            {Array.from({ length: startDayIndex }).map((_, idx) => (
-              <div key={`empty-${idx}`} className="rounded-2xl border border-dashed border-zinc-200 dark:border-white/5 bg-zinc-50/10 dark:bg-transparent" />
-            ))}
+          {/* MOBILE BEAUTIFUL CALENDAR VIEW */}
+          <div className="flex md:hidden flex-col gap-4 flex-1">
+            {/* iOS style calendar container matching screenshot */}
+            <div className="bg-white dark:bg-zinc-900/40 p-5 rounded-3xl border border-zinc-200 dark:border-white/5 shadow-sm flex flex-col gap-4">
+              {/* Single letter weekday labels: M T W T F S S */}
+              <div className="grid grid-cols-7 text-center">
+                {['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((day, idx) => (
+                  <span key={idx} className="text-xs font-bold text-neutral-400 dark:text-neutral-500 uppercase tracking-widest">
+                    {day}
+                  </span>
+                ))}
+              </div>
 
-            {/* Actual days */}
-            {Array.from({ length: daysInMonth }).map((_, idx) => {
-              const dayNum = idx + 1;
-              const isToday =
-                dayNum === new Date().getDate() &&
-                currentDate.getMonth() === new Date().getMonth() &&
-                currentDate.getFullYear() === new Date().getFullYear();
+              {/* Day cells */}
+              <div className="grid grid-cols-7 gap-y-4 text-center">
+                {Array.from({ length: startDayIndex }).map((_, idx) => (
+                  <div key={`empty-mob-${idx}`} className="h-10" />
+                ))}
 
-              const dayItems = getDayItems(currentDate.getFullYear(), currentDate.getMonth(), dayNum);
+                {Array.from({ length: daysInMonth }).map((_, idx) => {
+                  const dayNum = idx + 1;
+                  const targetDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), dayNum);
+                  const isToday =
+                    dayNum === new Date().getDate() &&
+                    currentDate.getMonth() === new Date().getMonth() &&
+                    currentDate.getFullYear() === new Date().getFullYear();
+                  
+                  const isSelected =
+                    dayNum === selectedDate.getDate() &&
+                    currentDate.getMonth() === selectedDate.getMonth() &&
+                    currentDate.getFullYear() === selectedDate.getFullYear();
 
-              return (
-                <div
-                  key={`day-${dayNum}`}
-                  className={`rounded-2xl border min-h-[80px] p-2 flex flex-col justify-between transition-all ${
-                    isToday
-                      ? 'border-violet-500 bg-violet-500/[0.03] shadow-inner'
-                      : 'border-zinc-200 dark:border-white/5 bg-white dark:bg-zinc-900/30'
-                  }`}
-                >
-                  {/* Day label */}
-                  <div className="flex items-center justify-between">
-                    <span className={`text-xs font-bold ${isToday ? 'text-violet-500 bg-violet-500/10 rounded-full w-5 h-5 flex items-center justify-center' : 'text-neutral-700 dark:text-neutral-300'}`}>
-                      {dayNum}
-                    </span>
+                  const dayItems = getDayItems(currentDate.getFullYear(), currentDate.getMonth(), dayNum);
+
+                  return (
+                    <button
+                      key={`day-mob-${dayNum}`}
+                      type="button"
+                      onClick={() => setSelectedDate(targetDate)}
+                      className="flex flex-col items-center justify-center h-10 relative focus:outline-none"
+                    >
+                      <div className={`w-8 h-8 flex items-center justify-center text-sm font-bold rounded-full transition-all relative ${
+                        isSelected
+                          ? 'bg-violet-600 text-white shadow-sm scale-105'
+                          : isToday
+                            ? 'bg-rose-500/10 text-rose-500 border border-rose-500/30'
+                            : 'text-neutral-700 dark:text-neutral-300 hover:bg-zinc-100 dark:hover:bg-white/5'
+                      }`}>
+                        {dayNum}
+                      </div>
+
+                      {/* Dot perfectly centered under the active day circle, exactly like screenshot */}
+                      {dayItems.length > 0 && (
+                        <span className="absolute bottom-[-4px] left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-amber-500" />
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Selected Day Agenda Timeline List below the card */}
+            <div className="flex-1 mt-2 flex flex-col gap-3 min-h-0 bg-white dark:bg-zinc-900/30 p-4 border border-zinc-200 dark:border-white/5 rounded-3xl shadow-sm">
+              <div className="flex items-center justify-between border-b border-zinc-200 dark:border-white/5 pb-2">
+                <div className="flex flex-col">
+                  <span className="text-[9px] font-bold text-violet-500 dark:text-violet-400 uppercase tracking-widest">
+                    Agenda Timeline
+                  </span>
+                  <h3 className="text-xs font-extrabold text-neutral-800 dark:text-neutral-100 font-display">
+                    {selectedDate.toLocaleDateString([], { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}
+                  </h3>
+                </div>
+                
+                <span className="text-[10px] font-mono font-bold text-neutral-500 dark:text-neutral-400 bg-zinc-100 dark:bg-white/5 px-2.5 py-0.5 rounded-full">
+                  {getSelectedDayFullItems().length} {getSelectedDayFullItems().length === 1 ? 'item' : 'items'}
+                </span>
+              </div>
+
+              {/* Scrolling timeline items */}
+              <div className="flex-1 flex flex-col gap-2 min-h-0">
+                {getSelectedDayFullItems().length === 0 ? (
+                  <div className="py-8 text-center text-xs text-neutral-400 dark:text-neutral-500 flex flex-col items-center justify-center gap-2">
+                    <Clock className="w-6 h-6 text-neutral-300 dark:text-neutral-700" />
+                    <span>No events or deadlines on this day.</span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setNewEventDate(`${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(2, '0')}-${String(selectedDate.getDate()).padStart(2, '0')}`);
+                        setShowAddForm(true);
+                      }}
+                      className="text-[10px] font-bold text-violet-500 hover:underline"
+                    >
+                      + Add Event
+                    </button>
                   </div>
+                ) : (
+                  getSelectedDayFullItems().map(item => {
+                    const borderColors: Record<string, string> = {
+                      violet: 'border-l-violet-500',
+                      indigo: 'border-l-indigo-500',
+                      emerald: 'border-l-emerald-500',
+                      amber: 'border-l-amber-500',
+                      rose: 'border-l-rose-500',
+                    };
 
-                  {/* Day item list */}
-                  <div className="flex flex-col gap-1 mt-1.5 overflow-hidden">
-                    {dayItems.slice(0, 3).map(item => (
+                    const formatTimeDisplay = (timeStr?: string) => {
+                      if (!timeStr || timeStr === 'All Day') return 'All Day';
+                      try {
+                        const [hours, minutes] = timeStr.split(':');
+                        const h = parseInt(hours);
+                        const ampm = h >= 12 ? 'PM' : 'AM';
+                        const displayH = h % 12 === 0 ? 12 : h % 12;
+                        return `${displayH}:${minutes} ${ampm}`;
+                      } catch {
+                        return timeStr;
+                      }
+                    };
+
+                    return (
                       <div
                         key={item.id}
-                        className={`text-[9px] font-semibold py-0.5 px-1.5 rounded border truncate ${
-                          colorMap[item.color] || colorMap.violet
-                        }`}
-                        title={item.title}
+                        className={`p-3 border-l-4 ${borderColors[item.color] || 'border-l-violet-500'} bg-white dark:bg-zinc-900/40 border border-y-zinc-100 border-r-zinc-100 dark:border-y-white/5 dark:border-r-white/5 rounded-r-2xl flex items-center justify-between gap-3 shadow-sm`}
                       >
-                        {item.title}
+                        <div className="flex-1 min-w-0 flex items-start gap-3">
+                          {/* Left-side time tag */}
+                          <div className="flex flex-col text-right w-16 flex-shrink-0 pt-0.5">
+                            <span className="text-[10px] font-mono font-bold text-neutral-800 dark:text-neutral-200">
+                              {formatTimeDisplay(item.time)}
+                            </span>
+                            <span className="text-[8px] font-bold text-neutral-400 uppercase tracking-wider">
+                              {item.type}
+                            </span>
+                          </div>
+
+                          {/* Right-side title info */}
+                          <div className="flex-1 min-w-0">
+                            <h4 className="text-xs font-bold text-neutral-800 dark:text-neutral-100 truncate">
+                              {item.title}
+                            </h4>
+                            {item.description && (
+                              <p className="text-[10px] text-neutral-500 dark:text-neutral-400 truncate mt-0.5">
+                                {item.description}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Trash/delete action */}
+                        {item.type === 'event' ? (
+                          <button
+                            onClick={() => {
+                              handleDeleteEvent(item.id);
+                              DbService.addNotification(user.id, {
+                                title: 'Event Deleted',
+                                message: `"${item.title}" was removed from your schedule.`,
+                                type: 'info',
+                                icon: 'Calendar',
+                              });
+                            }}
+                            className="p-1.5 rounded-lg hover:bg-red-500/10 text-neutral-400 hover:text-red-500 transition-colors flex-shrink-0"
+                            title="Delete event"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        ) : (
+                          <span className="text-[9px] font-bold text-neutral-400 bg-zinc-100 dark:bg-white/5 px-1.5 py-0.5 rounded">
+                            Synced
+                          </span>
+                        )}
                       </div>
-                    ))}
-                    {dayItems.length > 3 && (
-                      <div className="text-[8px] text-neutral-400 text-center font-bold">
-                        +{dayItems.length - 3} more
-                      </div>
-                    )}
-                  </div>
-                </div>
-              );
-            })}
+                    );
+                  })
+                )}
+              </div>
+            </div>
           </div>
         </div>
 
@@ -399,7 +643,6 @@ export default function CalendarApp({ user }: CalendarAppProps) {
           <div>
             <h2 className="text-xs font-bold text-neutral-400 dark:text-neutral-500 uppercase tracking-widest mb-3">Agenda & Events</h2>
             
-            {/* List of Scheduled Events */}
             <div className="space-y-2.5">
               {events.filter(e => e.title.toLowerCase().includes(searchQuery.toLowerCase())).length === 0 ? (
                 <div className="py-12 text-center text-xs text-neutral-400 dark:text-neutral-500 bg-zinc-50/50 dark:bg-white/[0.01] border border-dashed border-zinc-200 dark:border-white/5 rounded-2xl">
