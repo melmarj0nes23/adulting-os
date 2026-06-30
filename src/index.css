@@ -17,6 +17,7 @@ html, body, #root {
   position: fixed;
   width: 100%;
   height: 100%;
+  height: 100dvh; /* Enforce dynamic viewport height */
   margin: 0;
   padding: 0;
   touch-action: none; /* Disable default touch pinch/pull gestures at root */
@@ -25,6 +26,15 @@ html, body, #root {
 /* Permit scroll inside app windows and containers */
 .allow-scroll, .scrollbar-thin, textarea, input, select, [role="dialog"] {
   touch-action: auto;
+}
+
+/* Prevent iOS zoom on input focus by forcing minimum 16px font size on mobile/tablet viewports */
+@media (max-width: 1024px) {
+  input,
+  textarea,
+  select {
+    font-size: 16px !important;
+  }
 }
 
 /* Custom scrollbar helpers for our glass dashboards */

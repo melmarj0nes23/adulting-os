@@ -78,7 +78,7 @@ export default function LoginScreen({ onSuccess }: LoginScreenProps) {
   };
 
   return (
-    <div className="relative min-h-screen w-full flex items-center justify-center bg-gradient-to-tr from-slate-950 via-indigo-950 to-neutral-950 overflow-hidden font-sans select-none">
+    <div className="relative min-h-dvh w-full flex items-center justify-center bg-gradient-to-tr from-slate-950 via-indigo-950 to-neutral-950 overflow-hidden font-sans select-none">
       {/* Decorative blurred background shapes */}
       <div className="absolute -top-40 -left-40 w-96 h-96 rounded-full bg-violet-600/10 blur-3xl" />
       <div className="absolute -bottom-40 -right-40 w-96 h-96 rounded-full bg-emerald-600/10 blur-3xl" />

@@ -302,7 +302,7 @@ export default function App() {
 
   if (isAuthLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-zinc-950 text-white font-sans">
+      <div className="min-h-dvh flex items-center justify-center bg-zinc-950 text-white font-sans">
         <div className="flex flex-col items-center gap-4">
           <div className="w-8 h-8 border-2 border-white/25 border-t-violet-500 rounded-full animate-spin" />
           <span className="text-xs text-neutral-400">Restoring Digital Environment...</span>
@@ -312,7 +312,7 @@ export default function App() {
   }
 
   return (
-    <div className={`${themeClass} min-h-screen w-full select-none overflow-hidden font-sans`}>
+    <div className={`${themeClass} min-h-dvh w-full select-none overflow-hidden font-sans`}>
       <AnimatePresence mode="wait">
         {!user ? (
           <motion.div
@@ -330,7 +330,7 @@ export default function App() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className={`relative w-full h-screen ${activeWallpaper.className} flex flex-col`}
+            className={`relative w-full h-dvh ${activeWallpaper.className} flex flex-col`}
           >
             {/* Dynamic Wallpaper Designs Overlay */}
             <WallpaperDesigns wallpaperId={activeWallpaper.id} />
