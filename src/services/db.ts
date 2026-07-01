@@ -344,6 +344,42 @@ export const DbService = {
       console.error('Error loading user application data:', e);
     }
 
+    // Return clean data for real accounts (not demo_user)
+    if (userId !== 'demo_user') {
+      const cleanData = {
+        notifications: [
+          {
+            id: 'notif_1',
+            title: 'Workspace Initialized',
+            message: 'Welcome to LifeDeskOS! Your premium dashboard and personal productivity suite is active.',
+            type: 'success',
+            icon: 'Sparkles',
+            timestamp: new Date().toISOString(),
+            read: false,
+          },
+        ],
+        notes: [],
+        tasks: [],
+        events: [],
+        bills: [],
+        subscriptions: [],
+        groceryLists: [],
+        pantry: [],
+        inventory: [],
+        documents: [],
+        vehicles: [],
+        health: {
+          medications: [],
+          waterIntake: [],
+          weightHistory: [],
+          exerciseLog: [],
+          moodLog: [],
+        },
+      };
+      this.saveUserData(userId, cleanData);
+      return cleanData;
+    }
+
     // Default premium interactive mock data
     const now = new Date();
     const formatOffsetDate = (days: number) => {
