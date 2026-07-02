@@ -399,7 +399,7 @@ export default function MobileHomeScreen({
               animate={{ y: 0 }}
               exit={{ y: '100%' }}
               transition={{ type: 'spring', damping: 26, stiffness: 220 }}
-              className="fixed inset-x-0 bottom-0 h-[80dvh] bg-zinc-100/95 dark:bg-zinc-950/95 backdrop-blur-3xl rounded-t-[32px] border-t border-white/20 dark:border-white/10 shadow-[0_-12px_40px_rgba(0,0,0,0.3)] z-50 pointer-events-auto flex flex-col select-none"
+              className="fixed inset-0 h-full w-full bg-zinc-100/95 dark:bg-zinc-950/95 backdrop-blur-3xl border-t border-white/20 dark:border-white/10 shadow-[0_-12px_40px_rgba(0,0,0,0.3)] z-50 pointer-events-auto flex flex-col select-none"
             >
               {/* Drawer handle / Swipe indicator */}
               <div className="w-full flex justify-center py-3">
