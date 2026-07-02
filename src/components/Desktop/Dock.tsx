@@ -16,6 +16,7 @@ interface DockProps {
   accentColorClass: string;
   position?: 'bottom' | 'left' | 'right';
   magnifyDock?: boolean;
+  onOpenMobileDrawer?: () => void;
 }
 
 export default function Dock({ 
@@ -25,7 +26,8 @@ export default function Dock({
   onOpenApp, 
   accentColorClass,
   position = 'bottom',
-  magnifyDock = true
+  magnifyDock = true,
+  onOpenMobileDrawer
 }: DockProps) {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const [isMobile, setIsMobile] = useState(false);
@@ -73,14 +75,23 @@ export default function Dock({
     <div className={containerClass}>
       <div className={`${innerClass} bg-white/60 dark:bg-zinc-900/40 border border-zinc-200/50 dark:border-white/5 backdrop-blur-2xl shadow-2xl pointer-events-auto transition-all duration-300`}>
         {(() => {
-          const visibleApps = isMobile
-            ? apps.filter(app => ['about', 'settings', 'profile'].includes(app.id))
+          let visibleApps = isMobile
+            ? apps.filter(app => ['profile', 'settings', 'about'].includes(app.id))
             : apps;
+          
+          if (isMobile && onOpenMobileDrawer) {
+            visibleApps = [
+              { id: 'mobile-drawer', title: 'App Drawer', icon: 'Grid' } as AppManifest,
+              ...visibleApps
+            ];
+          }
+
           return visibleApps.map((app, index) => {
+            const isDrawer = app.id === 'mobile-drawer';
             // Dynamic Lucide Icon rendering
             const IconComponent = (LucideIcons as any)[app.icon] || LucideIcons.HelpCircle;
-            const isOpen = openAppIds.includes(app.id);
-            const isActive = activeAppId === app.id;
+            const isOpen = isDrawer ? false : openAppIds.includes(app.id);
+            const isActive = isDrawer ? false : activeAppId === app.id;
 
             // Compute magnification factors
             let scale = 1;
@@ -93,7 +104,13 @@ export default function Dock({
             return (
               <button
                 key={app.id}
-                onClick={() => onOpenApp(app.id)}
+                onClick={() => {
+                  if (isDrawer) {
+                    onOpenMobileDrawer?.();
+                  } else {
+                    onOpenApp(app.id);
+                  }
+                }}
                 onMouseEnter={() => setHoveredIndex(index)}
                 onMouseLeave={() => setHoveredIndex(null)}
                 className="relative flex flex-col items-center justify-end focus:outline-none group pb-1 flex-shrink-0"
@@ -113,9 +130,11 @@ export default function Dock({
                   className={`rounded-2xl flex items-center justify-center border transition-all duration-300 ${
                     isMobile ? 'w-9 h-9 rounded-xl' : 'w-12 h-12 rounded-2xl'
                   } ${
-                    isActive
-                      ? 'bg-black/10 dark:bg-white/10 border-black/10 dark:border-white/20 shadow-lg text-violet-600 dark:text-violet-400'
-                      : 'bg-black/[0.04] dark:bg-white/[0.04] border-zinc-200/60 dark:border-white/5 hover:border-zinc-300 dark:hover:border-white/10 hover:bg-black/[0.08] dark:hover:bg-white/[0.06] text-neutral-600 dark:text-white'
+                    isDrawer
+                      ? 'bg-violet-500/10 dark:bg-violet-500/25 border-violet-500/20 text-violet-600 dark:text-violet-400 hover:bg-violet-500/20 shadow-inner'
+                      : isActive
+                        ? 'bg-black/10 dark:bg-white/10 border-black/10 dark:border-white/20 shadow-lg text-violet-600 dark:text-violet-400'
+                        : 'bg-black/[0.04] dark:bg-white/[0.04] border-zinc-200/60 dark:border-white/5 hover:border-zinc-300 dark:hover:border-white/10 hover:bg-black/[0.08] dark:hover:bg-white/[0.06] text-neutral-600 dark:text-white'
                   }`}
                 >
                   <IconComponent className={`${isMobile ? 'w-4.5 h-4.5' : 'w-5 h-5'} transition-colors group-hover:text-violet-500 dark:group-hover:text-violet-400`} />

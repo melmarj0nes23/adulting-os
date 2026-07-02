@@ -36,6 +36,7 @@ import HealthApp from './components/Apps/HealthApp';
 import CommandPalette from './components/Desktop/CommandPalette';
 import DesktopWidgets from './components/Desktop/DesktopWidgets';
 import HomeScreenGrid from './components/Desktop/HomeScreenGrid';
+import MobileHomeScreen from './components/Desktop/MobileHomeScreen';
 
 export default function App() {
   const [user, setUser] = useState<User | null>(null);
@@ -58,6 +59,7 @@ export default function App() {
   const [activeWindowId, setActiveWindowId] = useState<string | null>(null);
   const [nextZIndex, setNextZIndex] = useState(10);
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
+  const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
 
   // Desktop drag boundaries ref
   const desktopRef = useRef<HTMLDivElement | null>(null);
@@ -335,14 +337,16 @@ export default function App() {
             {/* Dynamic Wallpaper Designs Overlay */}
             <WallpaperDesigns wallpaperId={activeWallpaper.id} />
 
-            {/* Taskbar Top */}
-            <Taskbar
-              user={user}
-              onSignOut={handleSignOut}
-              onOpenApp={openApp}
-              accentClass={preferences.accentColor}
-              showFullDate={preferences.showFullDate !== false}
-            />
+            {/* Taskbar Top (Hidden on Mobile) */}
+            {!isCompact && (
+              <Taskbar
+                user={user}
+                onSignOut={handleSignOut}
+                onOpenApp={openApp}
+                accentClass={preferences.accentColor}
+                showFullDate={preferences.showFullDate !== false}
+              />
+            )}
 
             {/* Floating Desktop Area containing windows */}
             <div
@@ -357,7 +361,7 @@ export default function App() {
               }}
             >
               {/* Interactive Desktop Widgets Layer */}
-              {user && (
+              {user && !isCompact && (
                 <DesktopWidgets 
                   user={user}
                   preferences={preferences}
@@ -366,12 +370,17 @@ export default function App() {
                 />
               )}
 
-              {/* Home Screen App Grid for Mobile & Tablet */}
+              {/* Home Screen Dashboard and App Drawer for Mobile & Tablet */}
               {user && isCompact && (
-                <HomeScreenGrid
-                  apps={APPS}
+                <MobileHomeScreen
+                  user={user}
+                  preferences={preferences}
                   onOpenApp={openApp}
-                  accentClass={preferences.accentColor}
+                  onUpdatePreferences={setPreferences}
+                  apps={APPS}
+                  isDrawerOpen={isMobileDrawerOpen}
+                  setIsDrawerOpen={setIsMobileDrawerOpen}
+                  onSignOut={handleSignOut}
                 />
               )}
 
@@ -472,6 +481,7 @@ export default function App() {
               accentColorClass={preferences.accentColor}
               position={preferences.dockPosition || 'bottom'}
               magnifyDock={preferences.magnifyDock !== false}
+              onOpenMobileDrawer={() => setIsMobileDrawerOpen(prev => !prev)}
             />
           </motion.div>
         )}

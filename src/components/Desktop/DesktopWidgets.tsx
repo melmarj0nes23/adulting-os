@@ -28,9 +28,10 @@ interface DesktopWidgetsProps {
   preferences: UserPreferences;
   onOpenApp: (appId: string) => void;
   onUpdatePreferences: (preferences: UserPreferences) => void;
+  isMobileDashboard?: boolean;
 }
 
-export default function DesktopWidgets({ user, preferences, onOpenApp, onUpdatePreferences }: DesktopWidgetsProps) {
+export default function DesktopWidgets({ user, preferences, onOpenApp, onUpdatePreferences, isMobileDashboard }: DesktopWidgetsProps) {
   const [userData, setUserData] = useState<any>(null);
   const [windowWidth, setWindowWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 1200);
   const [isWidgetPanelOpen, setIsWidgetPanelOpen] = useState(false);
@@ -217,6 +218,36 @@ export default function DesktopWidgets({ user, preferences, onOpenApp, onUpdateP
   };
 
   if (!userData) return null;
+
+  if (isMobileDashboard) {
+    return (
+      <div className="w-full flex flex-col gap-4">
+        {activeWidgets.map((widgetId) => {
+          const content = renderWidgetContent(widgetId);
+          if (!content) return null;
+
+          return (
+            <motion.div
+              key={`${widgetId}-mobile-inline`}
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.2 }}
+              className="w-full pointer-events-auto"
+            >
+              {content}
+            </motion.div>
+          );
+        })}
+
+        {activeWidgets.length === 0 && (
+          <div className="flex flex-col items-center justify-center py-12 text-center text-neutral-450 dark:text-neutral-400">
+            <p className="text-sm">No active widgets</p>
+            <p className="text-xs mt-1">Enable widgets in Settings App</p>
+          </div>
+        )}
+      </div>
+    );
+  }
 
   return (
     <div className="absolute inset-0 pointer-events-none z-[5] overflow-hidden">
