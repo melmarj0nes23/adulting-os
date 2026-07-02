@@ -93,10 +93,10 @@ export default function MobileHomeScreen({
     return () => clearInterval(interval);
   }, []);
 
-  // Filter apps based on search query
-  const filteredApps = apps.filter(app =>
-    app.title.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  // Filter and sort apps based on search query alphabetically
+  const filteredApps = [...apps]
+    .filter(app => app.title.toLowerCase().includes(searchQuery.toLowerCase()))
+    .sort((a, b) => a.title.localeCompare(b.title));
 
   // Time-based welcoming greeting
   const getGreeting = () => {
